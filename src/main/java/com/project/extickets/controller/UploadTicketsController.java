@@ -31,7 +31,7 @@ public class UploadTicketsController {
 			@RequestParam("eventDateTime") String eventDateTime, @RequestParam("venue") String venue,
 			@RequestParam("price") Double price, @RequestParam("file") MultipartFile file) throws IOException {
 
-		String uploadDir = System.getProperty("user.home") + "/extickets/server/guploads/";
+		String uploadDir = System.getProperty("user.home") + "/extickets/server/uploads/";
 		File dir = new File(uploadDir);
 		if (!dir.exists())
 			dir.mkdirs();
