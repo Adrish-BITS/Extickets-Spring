@@ -7,13 +7,17 @@ import org.springframework.stereotype.Service;
 
 import com.project.extickets.model.Ticket;
 import com.project.extickets.model.TicketWithStatus;
+import com.project.extickets.repository.AdminDashboardRepository;
 import com.project.extickets.repository.UploadTicketRepository;
 
 @Service
-public class UploadTicketService {
+public class AdminDashboardService {
 
 	@Autowired
 	private UploadTicketRepository ticketRepository;
+	
+	@Autowired
+	private AdminDashboardRepository adminRepository;
 
 	public void saveTicket(Ticket ticket) {
 		ticketRepository.save(ticket);
@@ -26,8 +30,10 @@ public class UploadTicketService {
 	public List<TicketWithStatus> getAllTicketsBasedOnStatus(String status) {
 		return ticketRepository.findByStatus(status);
 	}
-
-	public Ticket getTicketById(Long id) {
-		return ticketRepository.findById(id);
+	
+	public boolean changeStatus(String ticketId, String status) {
+		return adminRepository.changeStatus(ticketId, status);
 	}
+
+	
 }

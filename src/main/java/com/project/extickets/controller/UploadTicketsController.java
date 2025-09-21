@@ -29,22 +29,30 @@ public class UploadTicketsController {
 	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> uploadTicket(@RequestParam("eventName") String eventName,
 			@RequestParam("eventDateTime") String eventDateTime, @RequestParam("venue") String venue,
-			@RequestParam("price") Double price, @RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("price") Double price, @RequestParam("file") MultipartFile file,
+			@RequestParam("eventImage") MultipartFile eventImage) throws IOException {
 
-		String uploadDir = System.getProperty("user.home") + "/extickets/server/uploads/";
-		File dir = new File(uploadDir);
+		String fileUploadDir = System.getProperty("user.home") + "/extickets/server/uploads/";
+		File dir = new File(fileUploadDir);
 		if (!dir.exists())
 			dir.mkdirs();
-
-		String filePath = uploadDir + file.getOriginalFilename();
-		file.transferTo(new File(filePath));
+		String fileUploadPath = fileUploadDir + file.getOriginalFilename();
+		file.transferTo(new File(fileUploadPath));
+		
+		String eventImageUploadDir = System.getProperty("user.home") + "/extickets/server/eventImages/";
+		File dir1 = new File(eventImageUploadDir);
+		if (!dir1.exists())
+			dir1.mkdirs();
+		String eventImageUploadPath = eventImageUploadDir + eventImage.getOriginalFilename();
+		eventImage.transferTo(new File(eventImageUploadPath));
+		
 		Ticket ticket = new Ticket();
 		ticket.setEventName(eventName);
 		ticket.setEventDateTime(LocalDateTime.parse(eventDateTime));
 		ticket.setVenue(venue);
 		ticket.setPrice(price);
-		ticket.setFilePath(filePath);
-
+		ticket.setFilePath(fileUploadPath);
+		ticket.setEventImagePath(eventImageUploadPath);
 		ticketService.saveTicket(ticket);
 
 		return ResponseEntity.ok("Ticket uploaded successfully!");
@@ -54,7 +62,7 @@ public class UploadTicketsController {
 	public ResponseEntity<List<Ticket>> getAllTickets() {
 		return ResponseEntity.ok(ticketService.getAllTickets());
 	}
-
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<Ticket> getTicketById(@PathVariable Long id) {
 		return ResponseEntity.ok(ticketService.getTicketById(id));

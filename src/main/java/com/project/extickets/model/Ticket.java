@@ -3,12 +3,15 @@ package com.project.extickets.model;
 import java.time.LocalDateTime;
 
 public class Ticket {
-	
+
+	private String id;
 	private String eventName;
 	private LocalDateTime eventDateTime;
 	private String venue;
 	private Double price;
 	private String filePath;
+	private String eventImagePath;
+	private String uploadedDateTime;
 
 	// Getters and setters
 
@@ -51,4 +54,29 @@ public class Ticket {
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getEventImagePath() {
+		return eventImagePath;
+	}
+
+	public void setEventImagePath(String eventImagePath) {
+		this.eventImagePath = eventImagePath;
+	}
+
+	public String getUploadedDateTime() {
+		return uploadedDateTime;
+	}
+
+	public void setUploadedDateTime(String uploadedDateTime) {
+		this.uploadedDateTime = uploadedDateTime;
+	}
+
 }
