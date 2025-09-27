@@ -30,7 +30,7 @@ public class AdminDashboardRepository {
 		return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(TicketWithStatus.class), status);
 	}
 
-	public boolean changeStatus(String ticketId,String status) {
+	public boolean changeStatus(Long ticketId,String status) {
 		String sql = "UPDATE transactions " + "SET status = ?, updated_at = CURRENT_TIMESTAMP " + "WHERE ticket_id = ?";
 		return jdbcTemplate.update(sql, status, ticketId)>0;
 	}

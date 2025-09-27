@@ -3,6 +3,7 @@ package com.project.extickets.controller;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.extickets.enums.AdminEmailTemplates;
+import com.project.extickets.enums.UserEmailTemplates;
 import com.project.extickets.model.Ticket;
 import com.project.extickets.service.EmailService;
 import com.project.extickets.service.UploadTicketService;
@@ -57,21 +60,22 @@ public class UploadTicketsController {
 		ticket.setFilePath(fileUploadPath);
 		ticket.setEventImagePath(eventImageUploadPath);
 		ticketService.saveTicket(ticket);
-		String htmlBody = """
-				<html>
-				  <body style="font-family: Arial, sans-serif; background-color:#f9f9f9; padding:20px;">
-				    <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; padding:20px; box-shadow:0px 2px 6px rgba(0,0,0,0.1);">
-				      <h2 style="color:#2E86C1;">ExTickets - Ticket Upload Confirmation</h2>
-				      <p>Dear User,</p>
-				      <p>Your ticket <b>has been uploaded successfully</b> and is currently under review.</p>
-				      <p>You will be notified once the admin approves or rejects your ticket.</p>
-				      <hr style="border:0; border-top:1px solid #ddd;">
-				      <p style="font-size:12px; color:#888;">This is an automated email from ExTickets. Please do not reply.</p>
-				    </div>
-				  </body>
-				</html>
-				""";
-		emailService.sendEmail("backuponeplus@gmail.com", "Tickets Uploaded successfully", htmlBody);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm a");
+		String userHtmlBody = UserEmailTemplates.TICKET_UPLOADED.getTemplate().replace("${eventName}", ticket.getEventName())
+				.replace("${venue}", ticket.getVenue())
+				.replace("${eventDateTime}", ticket.getEventDateTime().format(formatter).toString())
+				.replace("${price}", ticket.getPrice().toString()).replace("${status}", "Review");
+		//TODO Add user email id here
+		emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] Tickets Uploaded successfully", userHtmlBody);
+		
+		String adminHtmlBody = AdminEmailTemplates.USER_UPLOADED.getTemplate()
+				.replace("${eventName}", ticket.getEventName())
+				.replace("${venue}", ticket.getVenue())
+				.replace("${eventDateTime}", ticket.getEventDateTime().format(formatter).toString())
+				.replace("${price}", ticket.getPrice().toString()).replace("${status}", "Review");
+		//TODO Add admin email id here
+		emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] New Ticket Uploaded - Review Required", adminHtmlBody);
+		
 		return ResponseEntity.ok("Ticket uploaded successfully!");
 	}
 

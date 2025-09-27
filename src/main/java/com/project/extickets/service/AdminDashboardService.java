@@ -31,7 +31,7 @@ public class AdminDashboardService {
 		return ticketRepository.findByStatus(status);
 	}
 	
-	public boolean changeStatus(String ticketId, String status) {
+	public boolean changeStatus(Long ticketId, String status) {
 		return adminRepository.changeStatus(ticketId, status);
 	}
 
