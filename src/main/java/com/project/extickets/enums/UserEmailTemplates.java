@@ -7,10 +7,14 @@ public enum UserEmailTemplates {
 		    <html>
 		      <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color:#f4f4f4; padding:20px; font-size:15px;">
 		        <div style="max-width:650px; margin:auto; background:#ffffff; border-radius:8px; padding:25px; box-shadow:0px 2px 8px rgba(0,0,0,0.12);">
+		          <div style="text-align:center; margin-bottom:15px;">
+		            <img src="https://extickets-bucket.s3.ap-south-1.amazonaws.com/950f68d6-3a2a-4240-8404-870b3b2faf3f_PikPng.com_sunny-icon-png_4175544.png" alt="ExTickets Logo" style="width: 80px; height: auto;">
+		          </div>
+
 		          <h2 style="color:#002752; text-align:center; font-size:22px; margin-bottom:20px;">🎟️ ExTickets - Ticket Uploaded</h2>
 		          <p style="font-size:15px;">Dear User,</p>
 		          <p style="font-size:15px;">Your ticket has been <b style="color:#2E86C1;">uploaded successfully</b> and is under review.</p>
-
+				  
 		          <table style="width:100%; border-collapse:collapse; margin:20px 0; font-size:15px;">
 		            <tr style="background-color:#002752; color:white;">
 		              <th style="text-align:left; padding:12px;">Field</th>

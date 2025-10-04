@@ -1,12 +1,12 @@
 package com.project.extickets.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,7 @@ import com.project.extickets.enums.AdminEmailTemplates;
 import com.project.extickets.enums.UserEmailTemplates;
 import com.project.extickets.model.Ticket;
 import com.project.extickets.service.EmailService;
+import com.project.extickets.service.S3StorageService;
 import com.project.extickets.service.UploadTicketService;
 
 @RestController
@@ -31,34 +32,26 @@ public class UploadTicketsController {
 	private UploadTicketService ticketService;
 	@Autowired
 	private EmailService emailService;
-
+	@Autowired
+	private S3StorageService s3StorageService;
+	
 	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> uploadTicket(@RequestParam("eventName") String eventName,
 			@RequestParam("eventDateTime") String eventDateTime, @RequestParam("venue") String venue,
 			@RequestParam("price") Double price, @RequestParam("file") MultipartFile file,
 			@RequestParam("eventImage") MultipartFile eventImage) throws IOException {
 
-		String fileUploadDir = System.getProperty("user.home") + "/extickets/server/uploads/";
-		File dir = new File(fileUploadDir);
-		if (!dir.exists())
-			dir.mkdirs();
-		String fileUploadPath = fileUploadDir + file.getOriginalFilename();
-		file.transferTo(new File(fileUploadPath));
-
-		String eventImageUploadDir = System.getProperty("user.home") + "/extickets/server/eventImages/";
-		File dir1 = new File(eventImageUploadDir);
-		if (!dir1.exists())
-			dir1.mkdirs();
-		String eventImageUploadPath = eventImageUploadDir + eventImage.getOriginalFilename();
-		eventImage.transferTo(new File(eventImageUploadPath));
+		try {
+		String fileUploadUrl = s3StorageService.uploadFile(file);
+	    String eventImageUploadUrl = s3StorageService.uploadFile(eventImage);
 
 		Ticket ticket = new Ticket();
 		ticket.setEventName(eventName);
 		ticket.setEventDateTime(LocalDateTime.parse(eventDateTime));
 		ticket.setVenue(venue);
 		ticket.setPrice(price);
-		ticket.setFilePath(fileUploadPath);
-		ticket.setEventImagePath(eventImageUploadPath);
+		ticket.setFilePath(fileUploadUrl);
+		ticket.setEventImagePath(eventImageUploadUrl);
 		ticketService.saveTicket(ticket);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm a");
 		String userHtmlBody = UserEmailTemplates.TICKET_UPLOADED.getTemplate().replace("${eventName}", ticket.getEventName())
@@ -77,6 +70,10 @@ public class UploadTicketsController {
 		emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] New Ticket Uploaded - Review Required", adminHtmlBody);
 		
 		return ResponseEntity.ok("Ticket uploaded successfully!");
+		}catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed: " + e.getMessage());
+	    }
 	}
 
 	@GetMapping
