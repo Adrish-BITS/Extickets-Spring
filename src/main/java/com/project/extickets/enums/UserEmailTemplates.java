@@ -8,7 +8,7 @@ public enum UserEmailTemplates {
 		      <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color:#f4f4f4; padding:20px; font-size:15px;">
 		        <div style="max-width:650px; margin:auto; background:#ffffff; border-radius:8px; padding:25px; box-shadow:0px 2px 8px rgba(0,0,0,0.12);">
 		          <div style="text-align:center; margin-bottom:15px;">
-		            <img src="https://extickets-bucket.s3.ap-south-1.amazonaws.com/950f68d6-3a2a-4240-8404-870b3b2faf3f_PikPng.com_sunny-icon-png_4175544.png" alt="ExTickets Logo" style="width: 80px; height: auto;">
+		            <img src=${eventImageUploadUrl} alt="ExTickets Logo" style="width: 80px; height: auto;">
 		          </div>
 
 		          <h2 style="color:#002752; text-align:center; font-size:22px; margin-bottom:20px;">🎟️ ExTickets - Ticket Uploaded</h2>

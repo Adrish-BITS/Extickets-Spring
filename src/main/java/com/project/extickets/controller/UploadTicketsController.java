@@ -55,6 +55,7 @@ public class UploadTicketsController {
 		ticketService.saveTicket(ticket);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm a");
 		String userHtmlBody = UserEmailTemplates.TICKET_UPLOADED.getTemplate().replace("${eventName}", ticket.getEventName())
+				.replace("${eventImageUploadUrl}", eventImageUploadUrl)
 				.replace("${venue}", ticket.getVenue())
 				.replace("${eventDateTime}", ticket.getEventDateTime().format(formatter).toString())
 				.replace("${price}", ticket.getPrice().toString()).replace("${status}", "Review");

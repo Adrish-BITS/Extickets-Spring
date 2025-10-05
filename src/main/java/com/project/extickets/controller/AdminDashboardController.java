@@ -1,4 +1,4 @@
-package com.project.extickets.model;
+package com.project.extickets.controller;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.extickets.enums.AdminEmailTemplates;
 import com.project.extickets.enums.UserEmailTemplates;
+import com.project.extickets.model.Ticket;
+import com.project.extickets.model.TicketWithStatus;
 import com.project.extickets.service.AdminDashboardService;
 import com.project.extickets.service.EmailService;
 import com.project.extickets.service.UploadTicketService;
@@ -24,10 +26,10 @@ public class AdminDashboardController {
 
 	@Autowired
 	private AdminDashboardService adminService;
-	
+
 	@Autowired
 	private UploadTicketService uploadService;
-	
+
 	@Autowired
 	private EmailService emailService;
 
@@ -47,18 +49,17 @@ public class AdminDashboardController {
 					.replace("${eventDateTime}", ticket.getEventDateTime().format(formatter).toString())
 					.replace("${price}", ticket.getPrice().toString()).replace("${status}", "Review");
 			// TODO Add user email id here
-			emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] Yayy!!! Your ticket is approved and live now",
-					userHtmlBody);
-			
+			emailService.sendEmail("backuponeplus345@gmail.com",
+					"[ExTickets] Yayy!!! Your ticket is approved and live now", userHtmlBody);
+
 			String adminHtmlBody = AdminEmailTemplates.ADMIN_APPROVED.getTemplate()
-					.replace("${eventName}", ticket.getEventName())
-					.replace("${venue}", ticket.getVenue())
+					.replace("${eventName}", ticket.getEventName()).replace("${venue}", ticket.getVenue())
 					.replace("${eventDateTime}", ticket.getEventDateTime().format(formatter).toString())
 					.replace("${price}", ticket.getPrice().toString()).replace("${status}", "Review");
-			//TODO Add admin email id here
-			emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] You Approved a Ticket Successfully", adminHtmlBody);
-		}
-		else if(newStatus.equalsIgnoreCase("Rejected")) {
+			// TODO Add admin email id here
+			emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] You Approved a Ticket Successfully",
+					adminHtmlBody);
+		} else if (newStatus.equalsIgnoreCase("Rejected")) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm a");
 			String userHtmlBody = UserEmailTemplates.TICKET_REJECTED.getTemplate()
 					.replace("${eventName}", ticket.getEventName()).replace("${venue}", ticket.getVenue())
@@ -67,16 +68,16 @@ public class AdminDashboardController {
 			// TODO Add user email id here
 			emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] Oops!!! Your ticket is rejected",
 					userHtmlBody);
-			
+
 			String adminHtmlBody = AdminEmailTemplates.ADMIN_REJECTED.getTemplate()
-					.replace("${eventName}", ticket.getEventName())
-					.replace("${venue}", ticket.getVenue())
+					.replace("${eventName}", ticket.getEventName()).replace("${venue}", ticket.getVenue())
 					.replace("${eventDateTime}", ticket.getEventDateTime().format(formatter).toString())
 					.replace("${price}", ticket.getPrice().toString()).replace("${status}", "Review");
-			//TODO Add admin email id here
-			emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] You Approved a Ticket Successfully", adminHtmlBody);
+			// TODO Add admin email id here
+			emailService.sendEmail("backuponeplus345@gmail.com", "[ExTickets] You Approved a Ticket Successfully",
+					adminHtmlBody);
 		}
-		
+
 		return adminService.changeStatus(id, newStatus) ? ResponseEntity.ok("Ticket status changed successfully!")
 				: ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such ticket exists");
 	}
